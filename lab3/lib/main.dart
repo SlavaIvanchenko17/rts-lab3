@@ -1,59 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:lab3/fermat.dart';
-
-class MyFermatArea extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => MyFermatAreaState();
-}
-
-class MyFermatAreaState extends State<MyFermatArea> {
-  final _formKey = GlobalKey<FormState>();
-  int number;
-  dynamic result;
-  Widget build(BuildContext context) {
-    return new Form(key: _formKey, child: new Column(
-        children: [
-          new Row(children: <Widget>[
-            new Container(padding:EdgeInsets.all(10.0),child: new Text('Число:')),
-            new Expanded(child: Container(padding:EdgeInsets.all(10.0),child:
-            new TextFormField(validator: (value){
-
-              if (value.isEmpty) return 'Введіть число!!!';
-              try {
-                number = int.parse(value);
-              } catch(e) {
-                number = null;
-                return 'Не число!!!';
-              }
-            })
-            )),
-          ]
-          ),
-
-          new SizedBox(height: 10.0),
-
-          new RaisedButton(onPressed: (){
-            if(_formKey.currentState.validate()) {
-              setState(() {
-                if (number is int) result = fermat(number);
-              });
-            }
-          }, child: Text('Знайти'), color: Colors.blue, textColor: Colors.white,),
-
-          new SizedBox(height: 50.0),
-
-          new Text(result == null ? '' : 'p = ${result[0]}\nq = ${result[1]}', style: TextStyle(fontSize: 30.0),)
-        ]
-    ));
-  }
-}
+import 'package:lab3/pages//fermat_page.dart';
+import 'package:lab3/pages//genetic_page.dart';
+import 'package:lab3/pages//percepton_page.dart';
 
 void main() => runApp(
     new MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: new Scaffold(
-            appBar: new AppBar(title: new Text('Факторизація Ферма')),
-            body: new MyFermatArea()
-        )
+        home: HomePage()
     )
 );
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int selectedPage = 0;
+
+  final _pageOptions = [
+    MyFermatArea(),
+    MyGeneticArea(),
+    MyPerceptonArea(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+            title: Text('Lab3'),
+        ),
+        backgroundColor: Colors.white,
+        body: _pageOptions[selectedPage],
+        bottomNavigationBar: BottomNavigationBar(
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.done_outline, size: 30), title: Text('Lab3.1')),
+            BottomNavigationBarItem(icon: Icon(Icons.done_outline, size: 30), title: Text('Lab3.2')),
+            BottomNavigationBarItem(icon: Icon(Icons.done_outline, size: 30), title: Text('Lab3.3')),
+          ],
+          selectedItemColor: Colors.blue,
+          elevation: 5.0,
+          unselectedItemColor: Colors.blue[900],
+          currentIndex: selectedPage,
+          backgroundColor: Colors.white,
+          onTap: (index){
+            setState(() {
+              selectedPage = index;
+            });
+          },
+        )
+    );
+  }
+}
