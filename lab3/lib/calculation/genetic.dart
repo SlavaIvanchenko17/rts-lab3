@@ -41,7 +41,7 @@ int getIndex(double val, List<List<int>> population, List<double>likelihood) {
   return len - 1;
 }
 
-List<List<int>> createNewPopulation(List<List<int>> population, List<double>likelihood, int y){
+List<List<int>> createNewPopulation(List<List<int>> population, List<double>likelihood, int y, double chance){
   int len = population.length;
   for(int i = 0; i < len; i++) {
     int parent1 = 0, parent2 = 0, iterations = 0;
@@ -50,12 +50,12 @@ List<List<int>> createNewPopulation(List<List<int>> population, List<double>like
       parent2 = getIndex((Random().nextDouble()), population, likelihood);
       if (++iterations > (pow(len, 2))) break;
     }
-    population[i] = crossover(population[parent1], population[parent2], y);
+    population[i] = crossover(population[parent1], population[parent2], y, chance);
   }
   return population;
 }
 
-List<int> crossover(List<int> p1, List<int> p2, int y) {
+List<int> crossover(List<int> p1, List<int> p2, int y, double chance) {
   int len = p1.length;
   int flag = Random().nextInt(len);
   List<int> child = List.filled(len, 0);
@@ -64,25 +64,28 @@ List<int> crossover(List<int> p1, List<int> p2, int y) {
       child[i] = p1[i];
     }
     child[i] = p2[i];
-    if (Random().nextDouble() < 0.05) child[i] = Random().nextInt(y);
+    if (Random().nextDouble() < chance) child[i] = Random().nextInt(y);
   }
   return child;
 }
 
-dynamic solve(List<int> data, int maxItr, int maxPop){
+dynamic solve(List<int> data, int maxItr, int maxPop, double chance){
   int len = data.length - 1;
   int y = data.last;
+  int numberPop = 0;
   List<List<int>> population = generatePopulation(y, len, maxPop);
   while(maxItr > 0){
     List<int> fitnesses = createFitness(population, data);
     int i = fitnesses.indexOf(0);
     if(i != -1){
-      return population[i];
+      return [population[i], numberPop];
     }
     List<double> likelihood = generateLikelihoods(fitnesses);
-    List<List<int>> child = createNewPopulation(population, likelihood, y);
+    List<List<int>> child = createNewPopulation(population, likelihood, y, chance);
+    numberPop++;
     population = child;
     maxItr--;
   }
-  return "Max iterations";
+  return ["Max iterations", numberPop];
 }
+

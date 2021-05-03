@@ -20,8 +20,8 @@ class _HomePageState extends State<HomePage> {
 
   final _pageOptions = [
     MyFermatArea(),
-    MyGeneticArea(),
     MyPerceptonArea(),
+    MyGeneticArea(),
   ];
 
   @override
